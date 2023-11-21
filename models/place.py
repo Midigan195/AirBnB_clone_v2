@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Table, Float, ForeignKey, PrimaryKeyConstraint
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -10,6 +10,14 @@ from models.user import User
 import shlex
 from os import getenv
 
+
+place_amenity = Table(
+        'place_amenity', Base.metadata,
+        Column('place_id', String(60), ForeignKey('places.id'),
+               primary_key=True, nullable=False),
+        Column('amenity_id', String(60), ForeignKey('amenities.id'),
+               primary_key=True, nullable=False),
+        PrimaryKeyConstraint('place_id', 'amenity_id'))
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -26,11 +34,13 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    #amenity_ids = []
+    amenity_ids = []
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship("Review", cascade='all, delete, delete-orphan',
                             backref="place")
+        amenities = relationship('Amenity', secondary=place_amenity,
+                                 back_populates='place_amenities', viewonly=False, overlaps="amenity_ids,places")
     else:
         @property
         def reviews(self):
@@ -46,3 +56,13 @@ class Place(BaseModel, Base):
                 if (elem.place_id == self.id):
                     result.append(elem)
             return (result)
+
+        @property
+        def amenities(self):
+            return [amenity for amenity in storage.all(Amenity).values()
+                    if amenity.id in self.amenity_ids]
+
+        @amenities.setter
+        def amenities(self, amenity):
+            if isinstance(amenity, Amenity):
+                self.amenity_ids.append(Amenity.id)

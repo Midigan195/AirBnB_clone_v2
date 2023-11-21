@@ -3,8 +3,12 @@
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+import models
 from models.city import City
 from models.user import User
+import shlex
+from os import getenv
 
 
 class Place(BaseModel, Base):
@@ -23,3 +27,22 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     #amenity_ids = []
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship("Review", cascade='all, delete, delete-orphan',
+                            backref="place")
+    else:
+        @property
+        def reviews(self):
+            var = models.storage.all()
+            lista = []
+            result = []
+            for key in var:
+                review = key.replace('.', ' ')
+                review = shlex.split(review)
+                if (review[0] == 'Review'):
+                    lista.append(var[key])
+            for elem in lista:
+                if (elem.place_id == self.id):
+                    result.append(elem)
+            return (result)

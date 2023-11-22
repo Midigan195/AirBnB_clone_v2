@@ -9,6 +9,7 @@ from models.city import City
 import shlex
 from os import getenv
 
+
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = "states"
@@ -16,7 +17,7 @@ class State(BaseModel, Base):
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         cities = relationship("City", cascade='all, delete, delete-orphan',
-                            backref="state")
+                              backref="state")
     else:
         @property
         def cities(self):

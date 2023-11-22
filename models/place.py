@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy import Column, String, Integer, Table, Float, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, String, Integer
+from sqlalchemy import Table, Float, ForeignKey, PrimaryKeyConstraint
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -18,6 +19,7 @@ place_amenity = Table(
         Column('amenity_id', String(60), ForeignKey('amenities.id'),
                primary_key=True, nullable=False),
         PrimaryKeyConstraint('place_id', 'amenity_id'))
+
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -38,9 +40,10 @@ class Place(BaseModel, Base):
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship("Review", cascade='all, delete, delete-orphan',
-                            backref="place")
+                               backref="place")
         amenities = relationship('Amenity', secondary=place_amenity,
-                                 back_populates='place_amenities', viewonly=False, overlaps="amenity_ids,places")
+                                 back_populates='place_amenities',
+                                 viewonly=False)
     else:
         @property
         def reviews(self):

@@ -128,26 +128,21 @@ class HBNBCommand(cmd.Cmd):
 
         for arg in arg_list:
             try:
-                """arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1].replace("_", " ")
-                    arg_splited[1] = arg_splited[1].replace('\\"', '"')
-                kw[arg_splited[0]] = arg_splited[1]"""
                 key_value = arg.split('=')
                 if len(key_value) == 2:
                     key, value = key_value
                     if value.startswith('"') and value.endswith('"'):
-                        value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+                        value = (value[1:-1].replace('_', ' ')
+                                 .replace('\\"', '"'))
                     elif '.' in value:
                         value = float(value)
                     else:
                         value = int(value)
                     kw[key] = value
                 else:
-                    continue;
+                    continue
             except(Exception):
-                continue;
+                continue
 
         new_instance = HBNBCommand.classes[class_name](**kw)
         storage.new(new_instance)
@@ -346,6 +341,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

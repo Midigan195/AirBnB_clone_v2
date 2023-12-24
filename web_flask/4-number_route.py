@@ -13,15 +13,18 @@ def hello_hbnb():
     """print web"""
     return 'Hello HBNB!'
 
+
 @app.route('/hbnb')
 def hbnb():
     """ Print Web """
     return 'HBNB'
 
+
 @app.route('/c/<text>')
 def c_is_fun(text):
     """print C follewd by specified text variable"""
     return 'C {}'.format(text.replace('_', ' '))
+
 
 @app.route('/python')
 @app.route('/python/<text>')
@@ -32,6 +35,7 @@ def python_is_cool(text='is cool'):
     """
     return 'Python {}'.format(text.replace('_', ' '))
 
+
 @app.route('/number/<int:n>')
 def number(n):
     """
@@ -39,6 +43,7 @@ def number(n):
     is a number
     """
     return '{:d} is a number'.format(n)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

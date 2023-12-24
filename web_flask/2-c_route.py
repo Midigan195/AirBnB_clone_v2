@@ -13,15 +13,18 @@ def hello_hbnb():
     """print web"""
     return 'Hello HBNB!'
 
+
 @app.route('/hbnb')
 def hbnb():
     """ Print Web """
     return 'HBNB'
 
+
 @app.route('/c/<text>')
 def c_is_fun(text):
     """print C follewd by specified text variable"""
     return 'C {}'.format(text.replace('_', ' '))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
